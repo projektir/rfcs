@@ -25,15 +25,24 @@ When trying to link a Windows library, use the `kind="dll"` attribute:
 
 ```rust
 #[cfg(windows)]
-#[link(name = "kernel32", kind = "dll")]
+#[link(name = "kernel32.dll", kind = "dll")]
 #[allow(non_snake_case)]
 extern "system" {
     fn GetStdHandle(nStdHandle: u32) -> *mut u8;
 }
 ```
 
+[21:20:52] <WindowsBunny> not really
+[21:20:56] <WindowsBunny> it's almost always .dll
+[21:22:11] <WindowsBunny> but for example, there's imports from bthprops.col
+[21:22:16] <WindowsBunny> irprops.col
+
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
+
+[17:21:36] <WindowsBunny> 1. the implementation chooses some arbitrary scheme to mangle kind="dll" extern symbols
+[17:22:00] <WindowsBunny> 2. The implementation provides a mapping from that mangled symbol to the unmangled symbol being exported from the specific dll
+[17:22:17] <WindowsBunny> that mapping is the idata section
 
 Import libraries are a mapping from symbols such as `_foo@4` to corresponding
 symbols in a `dll` such as `foo`.
@@ -44,7 +53,7 @@ Example of link:
 
 ```rust
 #[cfg(windows)]
-#[link(name = "kernel32", kind = "dll")]
+#[link(name = "kernel32.dll", kind = "dll")]
 #[allow(non_snake_case)]
 extern "system" {
     fn GetStdHandle(nStdHandle: u32) -> *mut u8;
